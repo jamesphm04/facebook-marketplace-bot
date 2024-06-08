@@ -7,7 +7,7 @@ def update_listings(listings, type, scraper):
 	# Check if listing is already listed and remove it then publish it like a new one
 	for listing in listings:
 		# Remove listing if it is already published
-		remove_listing(listing, type, scraper)
+		# remove_listing(listing, type, scraper)
 
 		# Publish the listing in marketplace
 		publish_listing(listing, type, scraper)
@@ -54,18 +54,26 @@ def publish_listing(data, listing_type, scraper):
 	# Call function by name dynamically
 	globals()[function_name](data, scraper)
 	
-	scraper.element_send_keys('label[aria-label="Price"] input', data['Price'])
-	scraper.element_send_keys('label[aria-label="Description"] textarea', data['Description'])
-	scraper.element_send_keys('label[aria-label="Location"] input', data['Location'])
-	scraper.element_click('ul[role="listbox"] li:first-child > div')
+	# scraper.element_send_keys('label[aria-label="Price"] input', data['Price'])
+	# scraper.element_send_keys('label[aria-label="Description"] textarea', data['Description'])
+	# scraper.element_click('ul[role="listbox"] li:first-child > div')
 
 	next_button_selector = 'div [aria-label="Next"] > div'
 	next_button = scraper.find_element(next_button_selector, False, 3)
 	if next_button:
 		# Go to the next step
 		scraper.element_click(next_button_selector)
-		# Add listing to multiple groups
-		add_listing_to_multiple_groups(data, scraper)
+		scraper.element_send_keys('label[aria-label="Location"] input', data['Location'])
+		scraper.element_click_by_xpath('//span[text()="' + data['Exact Location'] + '"]')
+  
+		# # Add listing to multiple groups
+		# add_listing_to_multiple_groups(data, scraper)
+
+  		# Go to the next step
+		next_button_selector = 'div [aria-label="Next"] > div'
+		next_button = scraper.find_element(next_button_selector, False, 3)
+		scraper.element_click(next_button_selector)
+  
 
 	# Publish the listing
 	scraper.element_click('div[aria-label="Publish"]:not([aria-disabled])')
@@ -74,7 +82,7 @@ def publish_listing(data, listing_type, scraper):
 	scraper.find_element('input[placeholder="Search your listings"]', False)
 
 	# if not next_button:
-	post_listing_to_multiple_groups(data, listing_type, scraper)
+	# post_listing_to_multiple_groups(data, listing_type, scraper)
 
 
 def generate_multiple_images_path(path, images):
@@ -130,21 +138,31 @@ def add_fields_for_vehicle(data, scraper):
 # Add specific fields for listing from type item
 def add_fields_for_item(data, scraper):
 	scraper.element_send_keys('label[aria-label="Title"] input', data['Title'])
+	scraper.element_send_keys('label[aria-label="Price"] input', data['Price'])
 
 	# Scroll to "Category" select field
 	scraper.scroll_to_element('label[aria-label="Category"]')
 	# Expand category select
 	scraper.element_click('label[aria-label="Category"]')
 	# Select category
-	scraper.element_click_by_xpath('//span[text()="' + data['Category'] + '"]')
+	scraper.element_click_by_xpath('//span[text()="' + data['Category1'] + '"]')
+	scraper.element_click_by_xpath('//span[text()="' + data['Category2'] + '"]')
+	scraper.element_click_by_xpath('//span[text()="' + data['Category3'] + '"]')
 
 	# Expand category select
 	scraper.element_click('label[aria-label="Condition"]')
 	# Select category
-	scraper.element_click_by_xpath('//span[@dir="auto"][text()="' + data['Condition'] + '"]')
+	scraper.element_click_by_xpath('//span[text()="' + data['Condition'] + '"]')
 
-	if data['Category'] == 'Sports & Outdoors':
-		scraper.element_send_keys('label[aria-label="Brand"] input', data['Brand'])
+	# if data['Category1'] == 'Antiques and collectibles':
+	scraper.element_send_keys('label[aria-label="Brand"] input', data['Brand'])
+	scraper.element_send_keys('label[aria-label="Time period"] input', data['Period'])
+ 
+	scraper.scroll_to_element('label[aria-label="SKU"]')
+	scraper.element_send_keys('label[aria-label="Original/Reproduction"] input', data['Original'])
+	scraper.element_send_keys('label[aria-label="Description"] textarea', data['Description'])
+	scraper.element_send_keys('label[aria-label="SKU"] input', data['SKU'])
+	
 
 def generate_title_for_listing_type(data, listing_type):
 	title = ''
