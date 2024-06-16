@@ -60,27 +60,37 @@ def publish_listing(data, listing_type, scraper):
 
 	next_button_selector = 'div [aria-label="Next"] > div'
 	next_button = scraper.find_element(next_button_selector, False, 3)
-	if next_button:
+	if not next_button.get_attribute('aria-disabled'):
 		# Go to the next step
 		scraper.element_click(next_button_selector)
-		scraper.element_send_keys('label[aria-label="Location"] input', data['Location'])
-		scraper.element_click_by_xpath('//span[text()="' + data['Exact Location'] + '"]')
+		# scraper.element_send_keys('label[aria-label="Location"] input', data['Location'])
+		# scraper.element_click_by_xpath('//span[text()="' + data['Exact Location'] + '"]')
   
 		# # Add listing to multiple groups
 		# add_listing_to_multiple_groups(data, scraper)
 
   		# Go to the next step
-		next_button_selector = 'div [aria-label="Next"] > div'
-		next_button = scraper.find_element(next_button_selector, False, 3)
-		scraper.element_click(next_button_selector)
+		# next_button_selector = 'div [aria-label="Next"] > div'
+		# next_button = scraper.find_element(next_button_selector, False, 3)
+		# scraper.element_click(next_button_selector)
   
 
-	# Publish the listing
-	scraper.element_click('div[aria-label="Publish"]:not([aria-disabled])')
+		# Publish the listing
+		scraper.element_click('div[aria-label="Publish"]:not([aria-disabled])')
 
-	# Wait until the listing is published and we are on the listings page where there is a search input
-	scraper.find_element('input[placeholder="Search your listings"]', False)
+		# Wait until the listing is published and we are on the listings page where there is a search input
+		scraper.find_element('input[placeholder="Search your listings"]', False)
+	else: 
+		save_draft_button = 'div [aria-label="Save draft"] > div'
+		scraper.element_click(save_draft_button)
+		scraper.go_to_page("https://facebook.com/marketplace/you/selling")
+		
+		# leave_page_selector = 'div [aria-label="Leave Page"] > div'
+		# scraper.find_element(leave_page_selector, False, 5)
+		# scraper.element_click(leave_page_selector)
+  
 
+		
 	# if not next_button:
 	# post_listing_to_multiple_groups(data, listing_type, scraper)
 
@@ -146,22 +156,15 @@ def add_fields_for_item(data, scraper):
 	scraper.element_click('label[aria-label="Category"]')
 	# Select category
 	scraper.element_click_by_xpath('//span[text()="' + data['Category1'] + '"]')
-	scraper.element_click_by_xpath('//span[text()="' + data['Category2'] + '"]')
-	scraper.element_click_by_xpath('//span[text()="' + data['Category3'] + '"]')
+ 
+	
 
-	# Expand category select
+	# Expand condition select
 	scraper.element_click('label[aria-label="Condition"]')
 	# Select category
 	scraper.element_click_by_xpath('//span[text()="' + data['Condition'] + '"]')
 
-	# if data['Category1'] == 'Antiques and collectibles':
-	scraper.element_send_keys('label[aria-label="Brand"] input', data['Brand'])
-	scraper.element_send_keys('label[aria-label="Time period"] input', data['Period'])
- 
-	scraper.scroll_to_element('label[aria-label="SKU"]')
-	scraper.element_send_keys('label[aria-label="Original/Reproduction"] input', data['Original'])
 	scraper.element_send_keys('label[aria-label="Description"] textarea', data['Description'])
-	scraper.element_send_keys('label[aria-label="SKU"] input', data['SKU'])
 	
 
 def generate_title_for_listing_type(data, listing_type):
