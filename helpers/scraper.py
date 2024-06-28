@@ -184,6 +184,27 @@ class Scraper:
 
 		return element
 
+	def find_multiple_elements_by_xpath(self, xpath, index, exit_on_missing_element = True, wait_element_time = None):
+		if wait_element_time is None:
+			wait_element_time = self.wait_element_time
+
+		# Intialize the condition to wait
+		wait_until = EC.presence_of_all_elements_located((By.XPATH, xpath))
+
+		try:
+			# Wait for element to load
+			elements = WebDriverWait(self.driver, wait_element_time).until(wait_until)
+		except:
+			if exit_on_missing_element:
+				# End the program execution because we cannot find the element
+				print('ERROR: Timed out waiting for the element with xpath "' + xpath + '" to load')
+				exit()
+			else:
+				return False
+
+		return elements[index]
+ 
+ 
 	# Wait random time before clicking on the element
 	def element_click(self, selector, delay = True):
 		if delay:
