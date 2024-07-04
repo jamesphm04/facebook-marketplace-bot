@@ -52,7 +52,7 @@ def update_item(self, item):
     scraper.go_to_page('https://www.facebook.com/marketplace/you/selling')
 
     scraper.element_delete_text('input[aria-label="Search your listings"]')
-    scraper.element_send_keys('input[aria-label="Search your listings"]', item['Name'])
+    scraper.element_send_keys('input[aria-label="Search your listings"]', item['name'])
     time.sleep(1)
     
     scraper.element_click('div[aria-label="More"]')
@@ -60,15 +60,15 @@ def update_item(self, item):
     time.sleep(5)
     
     #Update price
-    if item.get('Price'):
+    if item.get('price'):
         update_price(item, scraper)
         
     #Update condition
-    if item.get('Condition'):
+    if item.get('condition'):
         update_condition(item, scraper)
         
     #Update location
-    if item.get('Location'):
+    if item.get('location'):
         update_location(item, scraper)
     
     scraper.element_click('div[aria-label="Update"]')
@@ -87,7 +87,7 @@ def delete_item(self, item):
 	scraper.go_to_page('https://www.facebook.com/marketplace/you/selling')
 
 	scraper.element_delete_text('input[aria-label="Search your listings"]')
-	scraper.element_send_keys('input[aria-label="Search your listings"]', item['Name'])
+	scraper.element_send_keys('input[aria-label="Search your listings"]', item['name'])
 	time.sleep(2)
 
 	scraper.element_click('div[aria-label="More"]')
@@ -113,20 +113,20 @@ def create_item(self, item):
 	scraper.element_click('div[aria-label="Marketplace sidebar"] a[aria-label="Create new listing"]')
 	scraper.element_click('a[href="/marketplace/create/item/"]')
 
-	images_path = generate_multiple_images_path(item['Photos Folder'], item['Photos Names'])
+	images_path = generate_multiple_images_path(item['photo_dir'], item['photo_names'])
 	scraper.input_file_add_files('input[accept="image/*,image/heif,image/heic"]', images_path)
  
-	scraper.element_send_keys('label[aria-label="Title"] input', item['Title'])
-	scraper.element_send_keys('label[aria-label="Price"] input', item['Price'])
+	scraper.element_send_keys('label[aria-label="Title"] input', item['title'])
+	scraper.element_send_keys('label[aria-label="Price"] input', item['price'])
 
 	scraper.scroll_to_element('label[aria-label="Category"]')
 	scraper.element_click('label[aria-label="Category"]')
-	scraper.element_click_by_xpath('//span[text()="' + item['Category1'] + '"]')
+	scraper.element_click_by_xpath(f'//span[text()="{item['category']}"]')
 
 	scraper.element_click('label[aria-label="Condition"]')
-	scraper.element_click_by_xpath('//span[text()="' + item['Condition'] + '"]')
+	scraper.element_click_by_xpath(f'//span[text()="{item['condition']}"]')
 
-	scraper.element_send_keys('label[aria-label="Description"] textarea', item['Description'])
+	scraper.element_send_keys('label[aria-label="Description"] textarea', item['description'])
  
 	scraper.element_click('div [aria-label="Next"] > div')
 	scraper.element_click('div[aria-label="Publish"]:not([aria-disabled])')
